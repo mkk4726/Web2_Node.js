@@ -4,7 +4,7 @@ var url = require('url');
 
 const template = require('./libs/templates');
 const { template_list } = template;
-const { template_description} = template;
+const { template_body} = template;
 
 var app = http.createServer(function(request, response) {
   var _url = request.url;
@@ -19,9 +19,9 @@ var app = http.createServer(function(request, response) {
     fs.readdir('./data', function (err, filelist){      
       fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
         let list = template_list(filelist);
-        let template = template_description(title, list , description);
+        let body = template_body(title, list , description);
         response.writeHead(200);
-        response.end(template);
+        response.end(body);
         })
       })
   } else {

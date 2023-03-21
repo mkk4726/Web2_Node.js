@@ -9,7 +9,7 @@ function template_list(filelist) {
   return list;
 }
 
-function template_description(title, list, description) {
+function template_body(title, list, description) {
   var template = `
       <!doctype html>
       <html>
@@ -27,5 +27,5 @@ function template_description(title, list, description) {
   return template;
 }
 
-module.exports = {template_list, template_description}; 
+module.exports = {template_list, template_body}; 
 
