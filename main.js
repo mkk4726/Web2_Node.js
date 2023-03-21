@@ -21,7 +21,8 @@ var app = http.createServer(function(request, response) {
     fs.readdir('./data', function (err, filelist){      
       fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
         let list = template_list(filelist);
-        let body = template_body(title, list , description);
+        let body = template_body(title, list , description,
+          `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`);
         response.writeHead(200);
         response.end(body);
         })
@@ -40,7 +41,8 @@ var app = http.createServer(function(request, response) {
           <input type="submit">
         </p>
       </form>`
-      let body = template_body(title, list, description);
+      let body = template_body(title, list, description,
+        ``);
       response.writeHead(200);
       response.end(body);
     }) 

@@ -12,7 +12,7 @@ function template_list(filelist) {
   return list;
 }
 
-function template_body(title, list, description) {
+function template_body(title, list, description, control) {
   var template = `
       <!doctype html>
       <html>
@@ -23,7 +23,7 @@ function template_body(title, list, description) {
       <body>
         <h1><a href="/">WEB</a></h1>
         ${list}
-        <a href="/create">create</a>
+        ${control}
         <h2>${title}</h2>
         <p>${description}</p>
       </body>
