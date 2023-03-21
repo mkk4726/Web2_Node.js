@@ -23,6 +23,7 @@ function template_body(title, list, description) {
       <body>
         <h1><a href="/">WEB</a></h1>
         ${list}
+        <a href="/create">create</a>
         <h2>${title}</h2>
         <p>${description}</p>
       </body>
