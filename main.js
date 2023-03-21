@@ -17,14 +17,12 @@ var app = http.createServer(function(request, response) {
       title = 'INDEX'};
     
     fs.readdir('./data', function (err, filelist){      
-      var title = 'Welcome';
-      var description = 'Hello, Node.js';
-
-      let list = template_list(filelist);
-      let template = template_description(title, list , description);
-      
-      response.writeHead(200);
-      response.end(template);
+      var description = fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
+        let list = template_list(filelist);
+        let template = template_description(title, list , description);
+        response.writeHead(200);
+        response.end(template);
+        })
       })
   } else {
     response.writeHead(404);
