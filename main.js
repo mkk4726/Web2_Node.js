@@ -67,6 +67,7 @@ var app = http.createServer(function(request, response) {
       response.writeHead(302, {Location: `/?id=${title}`});
       response.end('success');
     })} else if (pathname === `/update`) {
+
       fs.readdir('./data', function (err, filelist){      
         fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
           let list = template_list(filelist);
@@ -101,14 +102,16 @@ var app = http.createServer(function(request, response) {
         var id = post.id;
         var title = post.title;
         var description = post.description;
+
         fs.rename(`data/${id}`, `data/${title}`, (err) => {
-          console.log(err);
+          // console.log(err);
+          fs.writeFile(`data/${title}`, description, 'utf8', err => {
+            if (err) {
+              // console.error(err);
+            }
+          });
         })
-        fs.writeFile(`data/${title}`, description, 'utf8', err => {
-          if (err) {
-            // console.error(err);
-          }
-        });
+        
         response.writeHead(302, {Location: `/?id=${title}`});
         response.end('success');
        
