@@ -2,11 +2,10 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
+const path = require('path');
 
 const template = require('./libs/templates');
-const path = require('path');
-const { template_list } = template;
-const { template_body} = template;
+const { template_list, template_body} = template;
 
 var app = http.createServer(function(request, response) {
   var _url = request.url;
