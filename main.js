@@ -48,7 +48,7 @@ var app = http.createServer(function(request, response) {
     var body = '';
     request.on('data', function(data) {
       body += data;
-      
+    
       if (body.length > 1e6) {
         request.connection.destroy();
       }
@@ -57,12 +57,14 @@ var app = http.createServer(function(request, response) {
       var post = qs.parse(body);
       var title = post.title;
       var description = post.description;
-    });
-    response.writeHead(200);
-    response.end('success');
-    
-  }
-  else {
+      fs.writeFile(`data/${title}`, description, 'utf8', err => {
+        if (err) {
+          console.error(err);
+        }
+      });
+      response.writeHead(302, {Location: `/?id=${title}`});
+      response.end('success');
+    })} else {
     response.writeHead(404);
     response.end('Not found');
   }
