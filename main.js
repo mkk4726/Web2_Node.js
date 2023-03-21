@@ -106,7 +106,7 @@ var app = http.createServer(function(request, response) {
         })
         fs.writeFile(`data/${title}`, description, 'utf8', err => {
           if (err) {
-            console.error(err);
+            // console.error(err);
           }
         });
         response.writeHead(302, {Location: `/?id=${title}`});
