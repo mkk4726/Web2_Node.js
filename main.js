@@ -22,7 +22,13 @@ var app = http.createServer(function(request, response) {
       fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
         let list = template_list(filelist);
         let body = template_body(title, list , description,
-          `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`);
+          `<a href="/create">create</a>
+          <a href="/update?id=${title}">update</a>
+          <form action="delete_process" method="post">
+            <input type="hidden" name="id" value="${title}">
+            <input type="submit" value="delete">
+          </form>
+          `);
         response.writeHead(200);
         response.end(body);
         })
@@ -117,6 +123,23 @@ var app = http.createServer(function(request, response) {
        
       })
 
+    } else if (pathname === '/delete_process') {
+      var body = '';
+      request.on('data', function(data) {
+        body += data;
+      });
+      request.on('end', function() {
+        var post = qs.parse(body);
+        var id = post.id;
+        
+        fs.unlink(`./data/${id}`, (err) => {
+          // console.log(err);
+        })
+
+        response.writeHead(302, {Location: `/`});
+        response.end('success');
+        
+        })
     } else {
     response.writeHead(404);
     response.end('Not found');
