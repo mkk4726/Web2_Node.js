@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+var qs = require('querystring');
 
 const template = require('./libs/templates');
 const path = require('path');
@@ -30,7 +31,7 @@ var app = http.createServer(function(request, response) {
       let title = 'create'; 
       let list = template_list(filelist);
       let description = `
-      <form action="http://localhost:3000/process_create" method="post"> 
+      <form action="http://localhost:3000/create_process" method="post"> 
         <p><input type="text" name="title" placeholder="title"></p>
         <p>
           <textarea name="description" placeholder="description"></textarea>
@@ -42,7 +43,24 @@ var app = http.createServer(function(request, response) {
       let body = template_body(title, list, description);
       response.writeHead(200);
       response.end(body);
-    })
+    }) 
+  } else if (pathname === '/create_process') {
+    var body = '';
+    request.on('data', function(data) {
+      body += data;
+      
+      if (body.length > 1e6) {
+        request.connection.destroy();
+      }
+    });
+    request.on('end', function() {
+      var post = qs.parse(body);
+      var title = post.title;
+      var description = post.description;
+    });
+    response.writeHead(200);
+    response.end('success');
+    
   }
   else {
     response.writeHead(404);
