@@ -14,17 +14,19 @@ var app = http.createServer(function(request, response) {
   var title = queryData.id;
   
   if (pathname === '/') {
-    if (title === undefined) {
-      title = 'INDEX'};
+    if (queryData.id === undefined) {
+      queryData.id = 'INDEX'
     
-    fs.readdir('./data', function (err, filelist){      
-      fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
+    };
+    fs.readdir('./data', function (err, filelist){   
+      var filteredId = path.parse(queryData.id).base;
+      fs.readFile(`./data/${filteredId}`, 'utf8', function(err, description) {
         let list = template_list(filelist);
-        let body = template_body(title, list , description,
+        let body = template_body(queryData.id, list , description,
           `<a href="/create">create</a>
-          <a href="/update?id=${title}">update</a>
+          <a href="/update?id=${filteredId}">update</a>
           <form action="delete_process" method="post">
-            <input type="hidden" name="id" value="${title}">
+            <input type="hidden" name="id" value="${filteredId}">
             <input type="submit" value="delete">
           </form>
           `);
@@ -72,9 +74,9 @@ var app = http.createServer(function(request, response) {
       response.writeHead(302, {Location: `/?id=${title}`});
       response.end('success');
     })} else if (pathname === `/update`) {
-
+      var filteredId = path.parse(queryData.id).base;
       fs.readdir('./data', function (err, filelist){      
-        fs.readFile(`./data/${title}`, 'utf8', function(err, description) {
+        fs.readFile(`./data/${filteredId}`, 'utf8', function(err, description) {
           let list = template_list(filelist);
           let body = template_body(title, list , 
             `
@@ -130,8 +132,9 @@ var app = http.createServer(function(request, response) {
       request.on('end', function() {
         var post = qs.parse(body);
         var id = post.id;
-        
-        fs.unlink(`./data/${id}`, (err) => {
+
+        var filteredId = path.parse(id).base;
+        fs.unlink(`./data/${filteredId}`, (err) => {
           // console.log(err);
         })
 
