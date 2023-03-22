@@ -3,6 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 const path = require('path');
+const sanitizeHtml = require('sanitize-html');
 
 const template = require('./libs/templates');
 const { template_list, template_body} = template;
@@ -12,6 +13,7 @@ var app = http.createServer(function(request, response) {
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;
   var title = queryData.id;
+  var sanitizedTitle = sanitizeHtml(title);
   
   if (pathname === '/') {
     if (queryData.id === undefined) {
@@ -21,12 +23,13 @@ var app = http.createServer(function(request, response) {
     fs.readdir('./data', function (err, filelist){   
       var filteredId = path.parse(queryData.id).base;
       fs.readFile(`./data/${filteredId}`, 'utf8', function(err, description) {
+        var sanitizedDescription = sanitizeHtml(description);
         let list = template_list(filelist);
-        let body = template_body(queryData.id, list , description,
+        let body = template_body(sanitizedTitle, list , sanitizedDescription,
           `<a href="/create">create</a>
-          <a href="/update?id=${filteredId}">update</a>
+          <a href="/update?id=${sanitizedTitle}">update</a>
           <form action="delete_process" method="post">
-            <input type="hidden" name="id" value="${filteredId}">
+            <input type="hidden" name="id" value="${sanitizedTitle}">
             <input type="submit" value="delete">
           </form>
           `);
@@ -65,7 +68,7 @@ var app = http.createServer(function(request, response) {
     request.on('end', function() {
       var post = qs.parse(body);
       var title = post.title;
-      var description = post.description;
+      var description = sanitizeHtml(post.description);
       fs.writeFile(`data/${title}`, description, 'utf8', err => {
         if (err) {
           console.error(err);
@@ -78,11 +81,11 @@ var app = http.createServer(function(request, response) {
       fs.readdir('./data', function (err, filelist){      
         fs.readFile(`./data/${filteredId}`, 'utf8', function(err, description) {
           let list = template_list(filelist);
-          let body = template_body(title, list , 
+          let body = template_body(sanitizedTitle, list , 
             `
             <form action="/update_process" method="post"> 
-              <input type="hidden" name="id" value="${title}">
-              <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+              <input type="hidden" name="id" value="${sanitizedTitle}">
+              <p><input type="text" name="title" placeholder="title" value="${sanitizedTitle}"></p>
               <p>
                 <textarea name="description" placeholder="description">${description}</textarea>
               </p>
@@ -108,7 +111,7 @@ var app = http.createServer(function(request, response) {
         var post = qs.parse(body);
         var id = post.id;
         var title = post.title;
-        var description = post.description;
+        var description = sanitizeHtml(post.description);
 
         fs.rename(`data/${id}`, `data/${title}`, (err) => {
           // console.log(err);
